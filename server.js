@@ -2,17 +2,25 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Film Duniya Scraper is Running! 🚀');
+app.get('/health', (req, res) => res.sendStatus(200));
+
+// FIX: Claude code ki match ayye format
+app.get('/movie/:id', (req, res) => {
+  const tmdbId = req.params.id;
+  // Claude code lo 'success' and 'm3u8' vethukuntundi kabatti
+  res.json({ 
+    success: true, 
+    m3u8: `https://vidsrc.to/embed/movie/${tmdbId}` 
+  });
 });
 
-// Example API endpoint for video links
-app.get('/play', (req, res) => {
-  const tmdbId = req.query.id;
-  // Ikada JavaScript extraction logic rayali ads skip cheyadaniki
-  res.json({ url: `https://vidsrc.to/embed/movie/${tmdbId}` }); 
+// TV Series episodes fix
+app.get('/tv/:id/:s/:e', (req, res) => {
+  const { id, s, e } = req.params;
+  res.json({ 
+    success: true, 
+    m3u8: `https://vidsrc.to/embed/tv/${id}/${s}/${e}` 
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is live on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server live on ${PORT}`));
